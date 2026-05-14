@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>لو حججت قبل... | معرض الحج</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #f0d080;
+    --gold-dim: rgba(201,168,76,0.15);
+    --gold-border: rgba(201,168,76,0.3);
+    --bg: #0a0805;
+    --bg2: #100d08;
+    --bg3: #181208;
+    --text: #f5e8c0;
+    --text-dim: rgba(245,232,192,0.6);
+    --green: #2d6a4f;
+    --green-light: #52b788;
+    --blue: #1a4a6e;
+    --blue-light: #48b3e8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Cairo', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Stars background */
+  .stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle var(--d) ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: var(--min-o); transform: scale(1); }
+    50% { opacity: var(--max-o); transform: scale(1.3); }
+  }
+
+  /* Ambient glow */
+  .ambient {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 50% 100%, rgba(201,168,76,0.05) 0%, transparent 70%);
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 40px 0 32px;
+  }
+  .header .kaaba-icon {
+    font-size: 42px;
+    display: block;
+    margin-bottom: 12px;
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .header h1 {
+    font-family: 'Amiri', serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .header p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+  .gold-line {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 16px auto;
+  }
+
+  /* Form card */
+  .form-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+    border: 1px solid var(--gold-border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .form-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+  }
+
+  .form-group {
+    margin-bottom: 22px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Country select */
+  .country-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .country-btn {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: right;
+  }
+  .country-btn:hover {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+    color: var(--text);
+  }
+  .country-btn.active {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.2);
+    color: var(--gold-light);
+    box-shadow: 0 0 12px rgba(201,168,76,0.15);
+  }
+  .country-btn .flag { font-size: 20px; }
+
+  /* Year slider */
+  .year-display {
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .year-display .year-num {
+    font-family: 'Amiri', serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1;
+    display: block;
+  }
+  .year-display .year-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+  .year-display .age-text {
+    font-size: 12px;
+    color: var(--gold);
+    margin-top: 4px;
+    display: block;
+  }
+
+  .slider-wrap {
+    position: relative;
+    padding: 8px 0;
+  }
+  input[type=range] {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--gold) var(--val, 50%), rgba(255,255,255,0.1) var(--val, 50%));
+    outline: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    direction: ltr;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--gold-light), var(--gold));
+    box-shadow: 0 0 10px rgba(201,168,76,0.5);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  /* Era selector */
+  .era-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .era-btn {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 10px;
+    padding: 10px 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    font-family: 'Cairo', sans-serif;
+  }
+  .era-btn:hover { border-color: var(--gold); background: var(--gold-dim); }
+  .era-btn.active {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.2);
+    box-shadow: 0 0 12px rgba(201,168,76,0.15);
+  }
+  .era-btn .era-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+  .era-btn .era-label { font-size: 11px; color: var(--gold); font-weight: 700; display: block; }
+  .era-btn .era-year { font-size: 10px; color: var(--text-dim); display: block; }
+
+  /* Calculate button */
+  .calc-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #8B6914, var(--gold), var(--gold-light), var(--gold), #8B6914);
+    background-size: 200% 100%;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a0f05;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+  .calc-btn:hover {
+    background-position: 100% 0;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(201,168,76,0.3);
+  }
+  .calc-btn:active { transform: translateY(0); }
+
+  /* Result card */
+  .result-card {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .result-card.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .result-header {
+    background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
+    border: 1px solid var(--gold-border);
+    border-radius: 16px 16px 0 0;
+    padding: 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold-light), var(--gold), var(--gold-light), transparent);
+  }
+  .result-header .result-title {
+    font-family: 'Amiri', serif;
+    font-size: 15px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .result-header .result-name {
+    font-family: 'Amiri', serif;
+    font-size: 24px;
+    color: var(--gold-light);
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .result-header .result-era-icon {
+    font-size: 36px;
+    display: block;
+    margin: 10px 0 6px;
+  }
+
+  /* Journey stat — the big one */
+  .journey-stat {
+    background: linear-gradient(135deg, rgba(201,168,76,0.1), var(--bg3));
+    border: 1px solid var(--gold-border);
+    border-top: none;
+    padding: 20px 24px;
+    text-align: center;
+  }
+  .journey-stat .days-num {
+    font-family: 'Amiri', serif;
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1;
+    display: block;
+    text-shadow: 0 0 30px rgba(201,168,76,0.4);
+  }
+  .journey-stat .days-label {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    display: block;
+  }
+  .journey-stat .journey-route {
+    display: inline-block;
+    margin-top: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  /* Details grid */
+  .details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--gold-border);
+    border-top: none;
+    border-radius: 0;
+    overflow: hidden;
+  }
+  .detail-item {
+    padding: 16px;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    border-left: 1px solid rgba(201,168,76,0.1);
+    background: rgba(255,255,255,0.02);
+    transition: background 0.2s;
+  }
+  .detail-item:hover { background: rgba(201,168,76,0.05); }
+  .detail-item:nth-child(odd) { border-left: none; }
+  .detail-item .d-icon { font-size: 18px; display: block; margin-bottom: 6px; }
+  .detail-item .d-label { font-size: 10px; color: var(--gold); font-weight: 600; display: block; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .detail-item .d-value { font-size: 12px; color: var(--text); line-height: 1.5; display: block; }
+
+  /* Today comparison */
+  .today-compare {
+    background: linear-gradient(135deg, rgba(26,74,110,0.3), rgba(10,30,50,0.5));
+    border: 1px solid rgba(72,179,232,0.2);
+    border-top: none;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .today-icon { font-size: 28px; flex-shrink: 0; }
+  .today-text .today-label { font-size: 10px; color: var(--blue-light); letter-spacing: 1px; display: block; margin-bottom: 4px; }
+  .today-text .today-value { font-size: 13px; color: var(--text); line-height: 1.5; }
+  .today-text .today-value strong { color: var(--blue-light); }
+
+  /* Reflection */
+  .reflection {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08), var(--bg));
+    border: 1px solid var(--gold-border);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    padding: 20px 24px;
+    text-align: center;
+  }
+  .reflection p {
+    font-family: 'Amiri', serif;
+    font-size: 15px;
+    color: var(--text-dim);
+    line-height: 1.9;
+    font-style: italic;
+  }
+  .reflection .reflection-gold {
+    color: var(--gold);
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  /* Share button */
+  .share-btn {
+    width: 100%;
+    margin-top: 16px;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid var(--gold-border);
+    border-radius: 12px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .share-btn:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+    transform: translateY(-1px);
+  }
+
+  /* Reset */
+  .reset-btn {
+    display: block;
+    text-align: center;
+    margin: 16px auto 0;
+    background: none;
+    border: none;
+    font-family: 'Cairo', sans-serif;
+    font-size: 12px;
+    color: var(--text-dim);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .reset-btn:hover { color: var(--gold); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(201,168,76,0.1);
+  }
+  .footer p { font-size: 11px; color: rgba(200,180,140,0.4); letter-spacing: 1px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(201,168,76,0.95);
+    color: #1a0f05;
+    padding: 10px 24px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 100;
+    white-space: nowrap;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+<div class="ambient"></div>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <span class="kaaba-icon">🕋</span>
+    <h1>لو حججتَ قبل...<br>كيف كانت رحلتك؟</h1>
+    <div class="gold-line"></div>
+    <p>اكتشف كيف كانت ستبدو رحلتك إلى بيت الله<br>لو عشتَ في زمن آخر</p>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card">
+
+    <!-- Country -->
+    <div class="form-group">
+      <label>🌍 من أي بلد جئت؟</label>
+      <div class="country-grid">
+        <button class="country-btn" data-country="sa" onclick="selectCountry(this)">
+          <span class="flag">🇸🇦</span> المملكة العربية السعودية
+        </button>
+        <button class="country-btn" data-country="eg" onclick="selectCountry(this)">
+          <span class="flag">🇪🇬</span> مصر
+        </button>
+        <button class="country-btn" data-country="in" onclick="selectCountry(this)">
+          <span class="flag">🇮🇳</span> الهند
+        </button>
+        <button class="country-btn" data-country="pk" onclick="selectCountry(this)">
+          <span class="flag">🇵🇰</span> باكستان
+        </button>
+        <button class="country-btn" data-country="bd" onclick="selectCountry(this)">
+          <span class="flag">🇧🇩</span> بنغلادش
+        </button>
+        <button class="country-btn" data-country="id" onclick="selectCountry(this)">
+          <span class="flag">🇮🇩</span> إندونيسيا
+        </button>
+        <button class="country-btn" data-country="tr" onclick="selectCountry(this)">
+          <span class="flag">🇹🇷</span> تركيا
+        </button>
+        <button class="country-btn" data-country="ma" onclick="selectCountry(this)">
+          <span class="flag">🇲🇦</span> المغرب
+        </button>
+      </div>
+    </div>
+
+    <!-- Era -->
+    <div class="form-group">
+      <label>⏳ في أي حقبة تريد أن تحج؟</label>
+      <div class="era-grid">
+        <button class="era-btn" data-era="500" onclick="selectEra(this)">
+          <span class="era-icon">🐪</span>
+          <span class="era-label">قبل ٥٠٠ سنة</span>
+          <span class="era-year">~ ٩٤٦ هـ</span>
+        </button>
+        <button class="era-btn" data-era="200" onclick="selectEra(this)">
+          <span class="era-icon">⛵</span>
+          <span class="era-label">قبل ٢٠٠ سنة</span>
+          <span class="era-year">~ ١٢٤٦ هـ</span>
+        </button>
+        <button class="era-btn" data-era="100" onclick="selectEra(this)">
+          <span class="era-icon">🚂</span>
+          <span class="era-label">قبل ١٠٠ سنة</span>
+          <span class="era-year">~ ١٣٤٦ هـ</span>
+        </button>
+        <button class="era-btn" data-era="60" onclick="selectEra(this)">
+          <span class="era-icon">🚢</span>
+          <span class="era-label">قبل ٦٠ سنة</span>
+          <span class="era-year">~ ١٣٨٦ هـ</span>
+        </button>
+        <button class="era-btn" data-era="40" onclick="selectEra(this)">
+          <span class="era-icon">✈️</span>
+          <span class="era-label">قبل ٤٠ سنة</span>
+          <span class="era-year">~ ١٤٠٦ هـ</span>
+        </button>
+        <button class="era-btn" data-era="0" onclick="selectEra(this)">
+          <span class="era-icon">🌐</span>
+          <span class="era-label">اليوم</span>
+          <span class="era-year">١٤٤٦ هـ</span>
+        </button>
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">✨ اكتشف رحلتك</button>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card" id="resultCard">
+    <div class="result-header">
+      <div class="result-title">رحلتك إلى بيت الله</div>
+      <span class="result-era-icon" id="resEraIcon">🐪</span>
+      <div class="result-name" id="resTitle">لو حججت من مصر قبل ٥٠٠ سنة...</div>
+    </div>
+
+    <div class="journey-stat">
+      <span class="days-num" id="resDays">٩٠</span>
+      <span class="days-label">يوماً — مدة رحلة الذهاب فقط</span>
+      <div class="journey-route" id="resRoute">درب الحجاز البري 🐪</div>
+    </div>
+
+    <div class="details-grid" id="detailsGrid">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="today-compare" id="todayCompare">
+      <div class="today-icon">✈️</div>
+      <div class="today-text">
+        <span class="today-label">اليوم بدلاً من ذلك</span>
+        <div class="today-value" id="todayText">طائرة من القاهرة في <strong>٤ ساعات</strong> فقط 🛫</div>
+      </div>
+    </div>
+
+    <div class="reflection">
+      <p id="reflectionText">كانت رحلة الحج اختباراً للإيمان قبل أن تكون فريضة...</p>
+    </div>
+
+    <button class="share-btn" onclick="shareResult()">
+      📤 شارك رحلتك
+    </button>
+    <button class="reset-btn" onclick="resetForm()">← ابدأ من جديد</button>
+  </div>
+
+  <div class="footer">
+    <p>🕋 معرض الحج .. رحلة عبر الزمن</p>
+    <p style="margin-top:4px">مزدلفة المشرّفة — ١٤٤٦ هـ</p>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">تم نسخ الرابط ✓</div>
+
+<script>
+// ── Stars ──────────────────────────────────────────────
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 80; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random() * 2 + 0.5;
+  s.style.cssText = `
+    width:${size}px; height:${size}px;
+    top:${Math.random()*100}%; left:${Math.random()*100}%;
+    --min-o:${Math.random()*0.2+0.1};
+    --max-o:${Math.random()*0.4+0.4};
+    --d:${Math.random()*4+2}s;
+    animation-delay:${Math.random()*4}s;
+  `;
+  starsEl.appendChild(s);
+}
+
+// ── Data ───────────────────────────────────────────────
+const countries = {
+  sa: { name: 'المملكة العربية السعودية', flag: '🇸🇦', routes: { 500:'طريق نجد البري', 200:'درب زبيدة', 100:'الطريق البري', 60:'بري أو بحري', 40:'رحلة جوية قصيرة' }, today:'ساعة واحدة بالسيارة من المدينة المنورة 🚗' },
+  eg: { name: 'مصر', flag: '🇪🇬', routes: { 500:'درب الحجاز البري', 200:'البحر الأحمر ثم براً', 100:'قناة السويس ثم بحراً', 60:'باخرة من السويس', 40:'طائرة من القاهرة' }, today:'٤ ساعات بالطائرة من القاهرة ✈️' },
+  in: { name: 'الهند', flag: '🇮🇳', routes: { 500:'بحر العرب ثم براً', 200:'طريق بحري طويل', 100:'سفينة من بومباي', 60:'باخرة من كراتشي أو مومباي', 40:'طائرة من دلهي أو مومباي' }, today:'٤ ساعات بالطائرة من مومباي ✈️' },
+  pk: { name: 'باكستان', flag: '🇵🇰', routes: { 500:'البر عبر إيران والعراق', 200:'بحراً عبر بحر العرب', 100:'براً أو بحراً', 60:'باخرة من كراتشي', 40:'طائرة من كراتشي أو لاهور' }, today:'٣ ساعات بالطائرة من كراتشي ✈️' },
+  bd: { name: 'بنغلادش', flag: '🇧🇩', routes: { 500:'براً عبر الهند وإيران', 200:'بحر العرب الطويل', 100:'سفينة من شيتاغونغ', 60:'باخرة طويلة المدى', 40:'طائرة من دكا' }, today:'٥ ساعات بالطائرة من دكا ✈️' },
+  id: { name: 'إندونيسيا', flag: '🇮🇩', routes: { 500:'رحلة بحرية شاقة عبر المحيط', 200:'طريق بحري طويل جداً', 100:'سفينة لأشهر', 60:'باخرة عبر المحيط الهندي', 40:'طائرة من جاكرتا' }, today:'٩ ساعات بالطائرة من جاكرتا ✈️' },
+  tr: { name: 'تركيا', flag: '🇹🇷', routes: { 500:'قافلة الحج السلطانية براً', 200:'درب الشام البري', 100:'قطار الحجاز', 60:'طريق بري وبحري', 40:'طائرة من إسطنبول' }, today:'٣ ساعات بالطائرة من إسطنبول ✈️' },
+  ma: { name: 'المغرب', flag: '🇲🇦', routes: { 500:'قافلة المغرب الكبرى براً', 200:'براً عبر ليبيا ومصر', 100:'بحرية عبر قناة السويس', 60:'باخرة وبر', 40:'طائرة من الدار البيضاء' }, today:'٦ ساعات بالطائرة من الدار البيضاء ✈️' },
+};
+
+const eras = {
+  500: {
+    icon: '🐪', label: 'قبل ٥٠٠ سنة',
+    days: { sa:14, eg:90, in:120, pk:100, bd:130, id:180, tr:75, ma:110 },
+    transport: 'قافلة إبل وخيول 🐪',
+    stay: 'خيام من الشعر والقماش',
+    water: 'آبار وقِرَب جلدية 🏺',
+    food: 'تمر وزاد محمول من البيت',
+    cost: 'ثروة كاملة — يبيع البعض داره',
+    risk: 'عالي جداً — قطاع الطرق والأوبئة',
+    pilgrims: 'عشرات الآلاف',
+    reflection: 'كانت رحلة الحج وصية وداع — يكتب الحاج وصيته قبل الرحيل، ويودّع أهله كمن لا يعلم هل سيعود. كانت الفريضة أعظم مما نتخيل.',
+  },
+  200: {
+    icon: '⛵', label: 'قبل ٢٠٠ سنة',
+    days: { sa:10, eg:45, in:70, pk:60, bd:80, id:120, tr:40, ma:65 },
+    transport: 'سفينة شراعية وقافلة 🛶',
+    stay: 'خيام بسيطة أو ضيافة أهل مكة',
+    water: 'آبار وبيع الماء بالأسعار',
+    food: 'أسواق محدودة وزاد من الوطن',
+    cost: 'مدخرات سنوات طويلة',
+    risk: 'متوسط — أخطار البحر والأمراض',
+    pilgrims: 'مئة ألف تقريباً',
+    reflection: 'كان الحاج يصوم ويدعو طوال الرحلة. بعضهم يموت في الطريق ويُدفن حيث حلّ. والوصول إلى مكة كان يعني الوصول إلى أعظم لحظة في العمر.',
+  },
+  100: {
+    icon: '🚂', label: 'قبل ١٠٠ سنة',
+    days: { sa:3, eg:20, in:35, pk:28, bd:40, id:70, tr:15, ma:30 },
+    transport: 'سكة حديد الحجاز والسفن 🚂',
+    stay: 'خيام محسّنة وبيوت بالإيجار',
+    water: 'شبكة مياه بدائية + زمزم',
+    food: 'أسواق مكة وما يحمله الحاج',
+    cost: 'مبلغ كبير لكن أقل من السابق',
+    risk: 'منخفض نسبياً — لكن الأوبئة قائمة',
+    pilgrims: 'مئة وخمسون ألفاً',
+    reflection: 'جاء قطار الحجاز ليُقصّر الرحلة لكن لم يُلغِ مشقتها. كان الحاج يسافر بمدخرات عمره، ويعود بذكرى لا تُنسى وقلب مُغسول.',
+  },
+  60: {
+    icon: '🚢', label: 'قبل ٦٠ سنة',
+    days: { sa:1, eg:8, in:15, pk:12, bd:18, id:25, tr:6, ma:12 },
+    transport: 'باخرة بخارية 🚢',
+    stay: 'خيام نظامية أولى وفنادق بسيطة',
+    water: 'شبكة مياه أفضل',
+    food: 'أسواق متنوعة ووجبات منظمة',
+    cost: 'في متناول الطبقة المتوسطة',
+    risk: 'منخفض — بداية التنظيم الحكومي',
+    pilgrims: 'أربعمئة ألف',
+    reflection: 'بدأ الحج يأخذ شكله الحديث. الباخرة تجمع حجاجاً من دول مختلفة، يتعارفون ويتشاركون الزاد والدعاء. كانت الرحلة في حد ذاتها عبادة.',
+  },
+  40: {
+    icon: '✈️', label: 'قبل ٤٠ سنة',
+    days: { sa:1, eg:1, in:1, pk:1, bd:1, id:1, tr:1, ma:1 },
+    transport: 'طائرة ✈️',
+    stay: 'خيام مكيفة ومجمعات سكنية',
+    water: 'ماء زمزم في كل مكان',
+    food: 'وجبات منظمة وطعام متنوع',
+    cost: 'ميسور لكثير من المسلمين',
+    risk: 'منخفض جداً',
+    pilgrims: 'مليون ونصف',
+    reflection: 'صارت الرحلة ساعات بدل أشهر. لكن قلب الحاج حين يرى الكعبة للمرة الأولى يظل نفسه — يسقط بالدموع كمن سقط أجداده قبل خمسمئة عام.',
+  },
+  0: {
+    icon: '🌐', label: 'اليوم',
+    days: { sa:1, eg:1, in:1, pk:1, bd:1, id:1, tr:1, ma:1 },
+    transport: 'طائرة مباشرة ✈️',
+    stay: 'خيام مكيفة بالكامل وفنادق 5 نجوم',
+    water: 'ماء زمزم وشبكة مياه متكاملة',
+    food: '١٢ مليون وجبة يومياً — متنوعة وضمانة',
+    cost: 'مدعوم ومنظم بالدول',
+    risk: 'الأدنى في التاريخ',
+    pilgrims: 'أكثر من مليوني حاج',
+    reflection: 'اليوم أنت هنا. لحظة في يوم واحد تُعادل ما كان يحلم به أجدادك طوال عمرهم. هذا ليس فقط تطوراً في الخدمات — هو فضل الله على ضيوف الرحمن.',
+  },
+};
+
+// ── State ──────────────────────────────────────────────
+let selectedCountry = null;
+let selectedEra = null;
+
+function selectCountry(btn) {
+  document.querySelectorAll('.country-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedCountry = btn.dataset.country;
+}
+
+function selectEra(btn) {
+  document.querySelectorAll('.era-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedEra = parseInt(btn.dataset.era);
+}
+
+function toArabicNums(n) {
+  return n.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+}
+
+function calculate() {
+  if (!selectedCountry) { showToast('اختر بلدك أولاً 🌍'); return; }
+  if (selectedEra === null) { showToast('اختر الحقبة الزمنية ⏳'); return; }
+
+  const c = countries[selectedCountry];
+  const e = eras[selectedEra];
+  const days = e.days[selectedCountry];
+  const eraKey = selectedEra === 0 ? 40 : selectedEra;
+  const route = c.routes[eraKey] || c.routes[40];
+
+  // Fill result
+  document.getElementById('resEraIcon').textContent = e.icon;
+
+  if (selectedEra === 0) {
+    document.getElementById('resTitle').textContent = `حجك اليوم من ${c.name} ${c.flag}`;
+  } else {
+    document.getElementById('resTitle').textContent = `لو حججت من ${c.name} ${c.flag} ${e.label}`;
+  }
+
+  document.getElementById('resDays').textContent = toArabicNums(days);
+  document.getElementById('resRoute').textContent = route;
+
+  const details = [
+    { icon:'🚗', label:'وسيلة التنقل', value: e.transport },
+    { icon:'🏕️', label:'المبيت', value: e.stay },
+    { icon:'💧', label:'الماء', value: e.water },
+    { icon:'🍽️', label:'الغذاء', value: e.food },
+    { icon:'💰', label:'التكلفة', value: e.cost },
+    { icon:'⚠️', label:'مستوى الخطر', value: e.risk },
+  ];
+
+  document.getElementById('detailsGrid').innerHTML = details.map(d => `
+    <div class="detail-item">
+      <span class="d-icon">${d.icon}</span>
+      <span class="d-label">${d.label}</span>
+      <span class="d-value">${d.value}</span>
+    </div>
+  `).join('');
+
+  if (selectedEra > 0) {
+    document.getElementById('todayCompare').style.display = 'flex';
+    document.getElementById('todayText').innerHTML = `اليوم: ${c.today}`;
+  } else {
+    document.getElementById('todayCompare').style.display = 'none';
+  }
+
+  document.getElementById('reflectionText').textContent = e.reflection;
+
+  // Show with animation
+  const card = document.getElementById('resultCard');
+  card.style.display = 'block';
+  card.classList.remove('show');
+  setTimeout(() => {
+    card.classList.add('show');
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+}
+
+function shareResult() {
+  const text = `🕋 لو حججت من ${countries[selectedCountry]?.name} ${eras[selectedEra]?.label || 'اليوم'}، كانت رحلتي ${toArabicNums(eras[selectedEra]?.days[selectedCountry] || 1)} يوماً!\n\nاكتشف رحلتك: ${window.location.href}`;
+  if (navigator.share) {
+    navigator.share({ title: 'رحلتي إلى بيت الله', text });
+  } else {
+    navigator.clipboard?.writeText(text).then(() => showToast('تم نسخ النص ✓'));
+  }
+}
+
+function resetForm() {
+  document.querySelectorAll('.country-btn, .era-btn').forEach(b => b.classList.remove('active'));
+  selectedCountry = null;
+  selectedEra = null;
+  const card = document.getElementById('resultCard');
+  card.classList.remove('show');
+  setTimeout(() => card.style.display = 'none', 400);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
